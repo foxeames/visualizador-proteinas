@@ -3,9 +3,9 @@ import streamlit as st
 import streamlit.components.v1 as components
 import google.generativeai as genai
 
-st.set_page_config(page_title="Visualizador v2.1", layout="wide")
+st.set_page_config(page_title="Visualizador", layout="wide")
 
-st.title("🧬 Explorador de Proteínas v2.1")
+st.title("🧬 Explorador de Proteínas")
 
 # --- VENTANA FLOTANTE DE INSTRUCCIONES ---
 @st.dialog("📖 Cómo usar esta Aplicación")
