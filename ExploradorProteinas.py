@@ -5,7 +5,7 @@ import google.generativeai as genai
 
 st.set_page_config(page_title="Visualizador", layout="wide")
 
-st.title("🧬 Explorador de Proteínas")
+st.title("🧬 Explorador de Proteínas Interactivo")
 
 # --- VENTANA FLOTANTE DE INSTRUCCIONES ---
 @st.dialog("📖 Cómo usar esta Aplicación")
