@@ -66,7 +66,7 @@ with col2:
         with st.spinner("Consultando al experto en bioquímica..."):
             try:
                 # Inicializamos el modelo (usando la generación actual)
-                model = genai.GenerativeModel('gemini-1.5-flash')
+                model = genai.GenerativeModel('gemini-2.5-flash')
                 
                 prompt = (
                     f"Actúa como un bioquímico experto y docente didáctico. "
