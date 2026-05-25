@@ -39,12 +39,17 @@ if api_key:
 else:
     st.sidebar.warning("Por favor, introduce tu API Key para activar el análisis con IA.")
 
-# Selector de Proteína
+# Catálogo expandido de proteínas (Diccionario Nombre: Código PDB)
 proteinas = {
-    "Insulina": "1TRZ", 
-    "Hemoglobina": "1A3N", 
-    "Colágeno": "1BKV"
+    "Insulina (Metabolismo)": "1TRZ", 
+    "Hemoglobina (Transporte de Oxígeno)": "1A3N", 
+    "Colágeno (Estructura de la piel)": "1BKV",
+    "Queratina (Cabello y Uñas)": "1CO4",
+    "Mioglobina (Reserva de Oxígeno muscular)": "1MBN",
+    "Proteína Spike (Coronavirus)": "6VXX",
+    "Anticuerpo Inmunoglobulina G": "1IGY"
 }
+
 nombre = st.sidebar.selectbox("Proteína a estudiar:", list(proteinas.keys()))
 pdb_id = proteinas[nombre]
 
