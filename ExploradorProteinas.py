@@ -3,7 +3,7 @@ import streamlit as st
 import streamlit.components.v1 as components
 import google.generativeai as genai
 
-# Configuración de página limpia y profesional
+# Configuración de página limpia y profesional (Estilo Joyful UI)
 st.set_page_config(page_title="Explorador de Proteínas", layout="wide")
 
 st.title("🧬 Explorador de Proteínas Interactivo")
@@ -17,18 +17,36 @@ def mostrar_instrucciones():
     
     ### 🎮 ¿Cómo interactuar con la proteína en 3D?
     * **Rotar:** Haz clic izquierdo dentro del recuadro de la proteína y arrastra el cursor en cualquier dirección.
-    * **Zoom:** Usa la rueda de desplazamiento de tu mouse (scroll) o desliza dos dedos en el trackpad hacia arriba/abajo dentro del cuadro.
-    * **Mover (Pan):** Mantén presionada la tecla `Shift` mientras haces clic izquierdo y arrastras para desplazar la molécula.
-    
-    ### 🧠 El Experto con IA
-    Gracias a la conexión automática, Gemini ya está activo tras bambalinas. Selecciona una proteína y un nivel de plegamiento; la explicación aparecerá al instante en el panel derecho.
+    * **Zoom:** Usa la rueda de desplazamiento de tu mouse o desliza **dos dedos hacia arriba o abajo** en el trackpad.
+    * **Mover / Panear (Desplazar molécula):**
+        * *Con Mouse:* Mantén presionada la tecla `Shift` mientras haces clic izquierdo y arrastras.
+        * *Con Trackpad de Mac:* Mantén presionadas las teclas **`Ctrl` + `Command` (⌘)**, haz clic y arrastra.
     """)
 
-# --- BARRA LATERAL (CONFIGURACIÓN) ---
-st.sidebar.title("Configuración")
+# --- BARRA LATERAL REDISEÑADA Y COMPACTA ---
+st.sidebar.title("🧪 Laboratorio Virtual")
+st.sidebar.markdown("Modifica los controles para alterar el experimento en tiempo real.")
 
-# Botón destacado de instrucciones
-if st.sidebar.button("❓ Ver Instrucciones de Uso", use_container_width=True):
+# Inyección de CSS para reducir los espacios exagerados (Padding) de la barra lateral
+st.markdown(
+    """
+    <style>
+        /* Reduce el espacio entre bloques en la barra lateral */
+        [data-testid="stSidebarUserContent"] .stBlock {
+            margin-bottom: -18px !important;
+            padding-bottom: 0px !important;
+        }
+        /* Ajusta la separación general de los elementos del sidebar */
+        [data-testid="stSidebar"] {
+            padding-top: 1.5rem !important;
+        }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
+# Botón destacado de instrucciones (Ahora más integrado)
+if st.sidebar.button("❓ Guía de Uso Rápido", use_container_width=True):
     mostrar_instrucciones()
 
 st.sidebar.markdown("---")
@@ -38,12 +56,12 @@ api_key_lista = False
 try:
     if "GEMINI_API_KEY" in st.secrets:
         genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
-        st.sidebar.success("🔒 Conexión con Gemini: ACTIVA")
+        st.sidebar.caption("🟢 **Gemini IA:** Conectado y Activo")
         api_key_lista = True
     else:
-        st.sidebar.warning("⚠️ No se encontró la API Key en los Secrets del servidor.")
+        st.sidebar.warning("⚠️ Falta API Key en Secrets")
 except Exception as e:
-    st.sidebar.error(f"Error al cargar credenciales de seguridad: {e}")
+    st.sidebar.error(f"Error de credenciales: {e}")
 
 st.sidebar.markdown("---")
 
@@ -58,12 +76,12 @@ proteinas = {
     "Anticuerpo Inmunoglobulina G": "1IGY"
 }
 
-nombre_seleccionado = st.sidebar.selectbox("Proteína a estudiar:", list(proteinas.keys()))
+nombre_seleccionado = st.sidebar.selectbox("1. Selecciona una Proteína:", list(proteinas.keys()))
 pdb_id = proteinas[nombre_seleccionado]
 
 # Selector de Nivel de Plegamiento
 nivel = st.sidebar.radio(
-    "Nivel de Plegamiento:", 
+    "2. Nivel de Plegamiento:", 
     ["Primaria (Cadena)", "Secundaria (Cintas)", "Terciaria (3D Completa)"]
 )
 
@@ -116,4 +134,4 @@ with col2:
             except Exception as e:
                 st.error(f"Error al procesar la consulta con Gemini: {e}")
         else:
-            st.info("Para ver el análisis automático de la IA, asegúrate de configurar la clave en la pestaña 'Secrets' de tu panel de Streamlit.")
+            st.info("Para ver el análisis de la IA, asegúrate de configurar la clave en los 'Secrets' del servidor de Streamlit.")
