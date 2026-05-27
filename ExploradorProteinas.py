@@ -3,7 +3,39 @@ import streamlit as st
 import streamlit.components.v1 as components
 import google.generativeai as genai
 
-# Configuración de página limpia y profesional (Estilo Joyful UI)
+# Configuración de página limp# Botón disparador para ejecutar la búsqueda (Protege el consumo desmedido de tokens)
+if st.sidebar.button("🚀 Buscar en el Banco Mundial", use_container_width=True):
+    if api_key_lista and nombre_buscado.strip():
+        try:
+            with st.spinner("Gemini indexando el banco PDB..."):
+                # Configuramos el modelo para que responda estrictamente en JSON estructurado
+                model = genai.GenerativeModel(
+                    'gemini-2.5-flash',
+                    generation_config={"response_mime_type": "application/json"}
+                )
+                
+                prompt_busqueda = (
+                    f"Actúa como un indexador bioinformático estricto del Protein Data Bank (PDB). "
+                    f"El usuario busca la proteína '{nombre_buscado}' originaria de '{organismo}'. "
+                    f"Genera una lista de hasta 3 opciones válidas de códigos PDB reales de 4 caracteres. "
+                    f"Devuelve un objeto JSON donde las llaves sean el 'Nombre Descriptivo (Especie)' y los valores sean el 'CODIGO' de 4 caracteres. "
+                    f"Ejemplo: {{\"Insulina Humana Activa\": \"1TRZ\"}}"
+                )
+                
+                import json
+                respuesta_raw = model.generate_content(prompt_busqueda).text
+                diccionario_detectado = json.loads(respuesta_raw.strip())
+                
+                if diccionario_detectado:
+                    st.session_state.opciones_pdb = diccionario_detectado
+                    st.session_state.nombre_seleccionado = list(diccionario_detectado.keys())[0]
+                    st.session_state.pdb_id = list(diccionario_detectado.values())[0]
+                    st.sidebar.success("¡Coincidencias encontradas!")
+                    st.rerun()
+        except Exception as e:
+            st.sidebar.error(f"Error de formato o respuesta: {e}")
+    else:
+        st.sidebar.warning("La IA de búsqueda requiere credenciales activas.")ia y profesional (Estilo Joyful UI)
 st.set_page_config(page_title="Explorador de Proteínas Pro", layout="wide")
 
 st.title("🧬 Explorador de Proteínas Interactivo")
@@ -84,28 +116,32 @@ if st.sidebar.button("🚀 Buscar en el Banco Mundial", use_container_width=True
     if api_key_lista and nombre_buscado.strip():
         try:
             with st.spinner("Gemini indexando el banco PDB..."):
-                model = genai.GenerativeModel('gemini-2.5-flash')
+                # Configuramos el modelo para que responda estrictamente en JSON estructurado
+                model = genai.GenerativeModel(
+                    'gemini-2.5-flash',
+                    generation_config={"response_mime_type": "application/json"}
+                )
                 
-                # Súper-prompt estructurado para forzar a la IA a actuar como un convertidor estricto Python
                 prompt_busqueda = (
                     f"Actúa como un indexador bioinformático estricto del Protein Data Bank (PDB). "
                     f"El usuario busca la proteína '{nombre_buscado}' originaria de '{organismo}'. "
                     f"Genera una lista de hasta 3 opciones válidas de códigos PDB reales de 4 caracteres. "
-                    f"Devuélveme únicamente un diccionario de Python con formato 'Nombre Descriptivo (Especie)': 'CODIGO'. "
-                    f"No agregues explicaciones, prosa ni Markdown fuera del diccionario. Ejemplo: {{'Insulina Humana Activa': '1TRZ'}}"
+                    f"Devuelve un objeto JSON donde las llaves sean el 'Nombre Descriptivo (Especie)' y los valores sean el 'CODIGO' de 4 caracteres. "
+                    f"Ejemplo: {{\"Insulina Humana Activa\": \"1TRZ\"}}"
                 )
                 
+                import json
                 respuesta_raw = model.generate_content(prompt_busqueda).text
-                # Conversión segura del texto de la IA a un diccionario real
-                diccionario_detectado = eval(respuesta_raw.strip().replace("```python", "").replace("```", ""))
+                diccionario_detectado = json.loads(respuesta_raw.strip())
                 
                 if diccionario_detectado:
                     st.session_state.opciones_pdb = diccionario_detectado
                     st.session_state.nombre_seleccionado = list(diccionario_detectado.keys())[0]
                     st.session_state.pdb_id = list(diccionario_detectado.values())[0]
                     st.sidebar.success("¡Coincidencias encontradas!")
+                    st.rerun()
         except Exception as e:
-            st.sidebar.error("Límite de cuota o formato. Usando base de respaldo.")
+            st.sidebar.error(f"Error de formato o respuesta: {e}")
     else:
         st.sidebar.warning("La IA de búsqueda requiere credenciales activas.")
 
