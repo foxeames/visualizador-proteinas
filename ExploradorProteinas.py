@@ -113,17 +113,22 @@ st.sidebar.markdown("---")
 
 # Despliegue de resultados dinámicos entregados por la IA
 if st.session_state.opciones_pdb:
+    # Función interna para forzar la actualización limpia del estado de la memoria
+    def actualizar_seleccion():
+        seleccion = st.session_state.selector_dinamico
+        st.session_state.pdb_id = st.session_state.opciones_pdb[seleccion]
+        st.session_state.nombre_seleccionado = seleccion
+
+    # Buscamos el índice actual para que no se reinicie la vista
+    indice_actual = list(st.session_state.opciones_pdb.keys()).index(st.session_state.nombre_seleccionado) if st.session_state.nombre_seleccionado in st.session_state.opciones_pdb else 0
+
     opcion_elegida = st.sidebar.selectbox(
         "🎯 Coincidencias encontradas (Elige una):", 
         list(st.session_state.opciones_pdb.keys()),
-        index=list(st.session_state.opciones_pdb.keys()).index(st.session_state.nombre_seleccionado) if st.session_state.nombre_seleccionado in st.session_state.opciones_pdb else 0
+        index=indice_actual,
+        key="selector_dinamico",
+        on_change=actualizar_seleccion
     )
-    
-    nuevo_pdb = st.session_state.opciones_pdb[opcion_elegida]
-    if nuevo_pdb != st.session_state.pdb_id:
-        st.session_state.pdb_id = nuevo_pdb
-        st.session_state.nombre_seleccionado = opcion_elegida
-        st.rerun()
 
 # Selector de Nivel de Plegamiento
 nivel = st.sidebar.radio(
