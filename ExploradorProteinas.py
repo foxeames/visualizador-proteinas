@@ -3,12 +3,11 @@ import streamlit as st
 import streamlit.components.v1 as components
 import google.generativeai as genai
 
-# Configuración de página limp# Botón disparador para ejecutar la búsqueda (Protege el consumo desmedido de tokens)
+# Botón disparador para ejecutar la búsqueda (Protege el consumo desmedido de tokens)
 if st.sidebar.button("🚀 Buscar en el Banco Mundial", use_container_width=True):
     if api_key_lista and nombre_buscado.strip():
         try:
             with st.spinner("Gemini indexando el banco PDB..."):
-                # Configuramos el modelo para que responda estrictamente en JSON estructurado
                 model = genai.GenerativeModel(
                     'gemini-2.5-flash',
                     generation_config={"response_mime_type": "application/json"}
@@ -35,7 +34,7 @@ if st.sidebar.button("🚀 Buscar en el Banco Mundial", use_container_width=True
         except Exception as e:
             st.sidebar.error(f"Error de formato o respuesta: {e}")
     else:
-        st.sidebar.warning("La IA de búsqueda requiere credenciales activas.")ia y profesional (Estilo Joyful UI)
+        st.sidebar.warning("La IA de búsqueda requiere credenciales activas.")
 st.set_page_config(page_title="Explorador de Proteínas Pro", layout="wide")
 
 st.title("🧬 Explorador de Proteínas Interactivo")
