@@ -115,10 +115,15 @@ st.sidebar.markdown("---")
 if st.session_state.opciones_pdb:
     opcion_elegida = st.sidebar.selectbox(
         "🎯 Coincidencias encontradas (Elige una):", 
-        list(st.session_state.opciones_pdb.keys())
+        list(st.session_state.opciones_pdb.keys()),
+        index=list(st.session_state.opciones_pdb.keys()).index(st.session_state.nombre_seleccionado) if st.session_state.nombre_seleccionado in st.session_state.opciones_pdb else 0
     )
-    st.session_state.pdb_id = st.session_state.opciones_pdb[opcion_elegida]
-    st.session_state.nombre_seleccionado = opcion_elegida
+    
+    nuevo_pdb = st.session_state.opciones_pdb[opcion_elegida]
+    if nuevo_pdb != st.session_state.pdb_id:
+        st.session_state.pdb_id = nuevo_pdb
+        st.session_state.nombre_seleccionado = opcion_elegida
+        st.rerun()
 
 # Selector de Nivel de Plegamiento
 nivel = st.sidebar.radio(
